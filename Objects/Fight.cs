@@ -86,14 +86,21 @@ public class Fight
         while(true)
         {
             int attackRoll = Random.Range(0, 20) + 1;
+            Debug.Log("Attack Roll: " + attackRoll);
+            Debug.Log("Defender AC: " + this.defender.getAC());
+
+            
             if(attackRoll >= this.defender.getAC())
             {
                 //attacker hits the defender
                 int damage = Random.Range(1, 6); //1 to 5 damage
+
                 this.defender.takeDamage(damage);
+                Debug.Log(this.attacker.getName() + " hits " + this.defender.getName() + " for " + damage + " damage!");
 
                 if(this.defender.isDead())
                 {
+                    this.fightOver = true;
                     Debug.Log(this.attacker.getName() + " killed " + this.defender.getName());
                     if(this.defender is Player)
                     {
@@ -104,10 +111,8 @@ public class Fight
                     }
                     else
                     {
-                        //monster died
-                        Debug.Log("Monster died");
-                        //remove the monster from the scene
-                        GameObject.Destroy(monsterGameObject); //remove the monster from the scene
+                    Debug.Log("Monster died");
+                        GameObject.Destroy(monsterGameObject);
                     }
                     break; //fight is over
                 }
