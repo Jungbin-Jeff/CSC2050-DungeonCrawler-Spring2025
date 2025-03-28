@@ -1,14 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem.Interactions;
 
+
 public class Fight
 {
     private Inhabitant attacker;
     private Inhabitant defender;
-
     private Monster theMonster;
 
     private bool fightOver = false;
+    private GameObject playerGO;
+    private GameObject monsterGO;
 
     public Fight(Monster m)
     {
@@ -30,61 +32,19 @@ public class Fight
         }
 
     }
-
-    public bool isFightOver()
+    
+ public void startFight(GameObject playerGameObject, GameObject monsterGameObject)
     {
-        return this.fightOver;
+        this.playerGO = playerGameObject;
+        this.monsterGO = monsterGameObject;
     }
 
-    public void takeASwing(GameObject playerGameObject, GameObject monsterGameObject)
+ 
+
+    public void takeASwing ()
     {
-        int attackRoll = Random.Range(0, 20) + 1;
-        Debug.Log("Attack Roll: " + attackRoll);
-        Debug.Log("Defender AC: " + this.defender.getAC());
-        
-        if(attackRoll >= this.defender.getAC())
-        {
-            //attacker hits the defender
-            int damage = Random.Range(1, 6); //1 to 5 damage
-            this.defender.takeDamage(damage);
+        if (fightOver) return;
 
-            if(this.defender.isDead())
-            {
-                this.fightOver = true;
-                Debug.Log(this.attacker.getName() + " killed " + this.defender.getName());
-                if(this.defender is Player)
-                {
-                    //player died
-                    Debug.Log("Player died");
-                    //end the game
-                    playerGameObject.SetActive(false); //hide the player
-                }
-                else
-                {
-                    //monster died
-                    Debug.Log("Monster died");
-                    //remove the monster from the scene
-                    GameObject.Destroy(monsterGameObject); //remove the monster from the scene
-                }
-            }
-        }
-        else
-        {
-            Debug.Log(this.attacker.getName() + " missed " + this.defender.getName());
-        }
-
-        Inhabitant temp = this.attacker;
-        this.attacker = this.defender;
-        this.defender = temp;
-    }
-
-    public void startFight(GameObject playerGameObject, GameObject monsterGameObject)
-    {
-        //should have the attacker and defender fight each until one of them dies.
-        //the attacker and defender should alternate between each fight round and
-        //the one who goes first was determined in the constructor.
-        while(true)
-        {
             int attackRoll = Random.Range(0, 20) + 1;
             Debug.Log("Attack Roll: " + attackRoll);
             Debug.Log("Defender AC: " + this.defender.getAC());
@@ -107,14 +67,14 @@ public class Fight
                         //player died
                         Debug.Log("Player died");
                         //end the game
-                        playerGameObject.SetActive(false); //hide the player
+                        playerGO.SetActive(false); //hide the player
                     }
                     else
                     {
                     Debug.Log("Monster died");
-                        GameObject.Destroy(monsterGameObject);
+                        GameObject.Destroy(monsterGO);
                     }
-                    break; //fight is over
+                   return;
                 }
             }
             else
@@ -125,5 +85,8 @@ public class Fight
             this.attacker = this.defender;
             this.defender = temp;
         }
-    }
+        public bool isFightOver()
+        {
+            return this. fightOver;
+        }
 }
