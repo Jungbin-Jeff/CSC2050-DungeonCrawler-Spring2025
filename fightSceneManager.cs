@@ -1,58 +1,39 @@
-using System;
+
 using UnityEngine;
 
-public class fightSceneManager : MonoBehaviour
+public class FightSceneManager : MonoBehaviour
 {
     public GameObject player;
     public GameObject monster;
 
-    private Monster theMonster;
+private Fight fight;
+private float timeSinceLastAttack = 0f;
 
-    private float timeSinceLastTimeDeltaTime = 0.0f;
+void Start()
+{
+    Monster monsterScript = monster. GetComponent<Monster>();
+    fight = new Fight (monsterScript);
+    fight.startFight(player, monster);
 
-    private Fight theFight;
+    Debug.Log("Player AC: " + Core.thePlayer.getAC());
+    Debug.Log("Monster AC: " + monsterScript.getAC());
+    
+}
 
-    private Vector3 playerStartPos;
-    private Vector3 monsterStartPos;
-    private Vector3 attackMove = new Vector3(1, 0, 0);
+void Update()
+{
+    if (fight.isFightOver()) return;
 
-    private bool isPlayerTurn = true;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    timeSinceLastAttack += Time.deltaTime;
+    
+    if (timeSinceLastAttack >= 1.0f)
     {
-        this.playerStartPos = this.player.transform.position;
-        this.monsterStartPos = this.monster.transform.position;
-
-        this.theMonster = new Monster("Goblin");
-        this.theFight = new Fight(this.theMonster);
-        print("Player AC: " + Core.thePlayer.getAC());
-        print("Monster AC: " + this.theMonster.getAC());
-
-        //f.startFight(player, monster); //we need this to be experienced over time, so we need it to be represented in Update
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        this.timeSinceLastTimeDeltaTime += Time.deltaTime;
-
-        //move the combatants
-        if(this.timeSinceLastTimeDeltaTime >= 0.5f)
-        {
-            //happens every 1 seconds
-            if(!this.theFight.isFightOver())
-            {
-                //the attacker should visibly move
-                //this.player.transform.position -= this.attackMove;
-                this.theFight.takeASwing(this.player, this.monster);
-            }
-            else
-            {
-                Debug.Log("Fight is over");
-            }
-            this.timeSinceLastTimeDeltaTime = 0.0f;
+    
+            fight.takeASwing();
+            timeSinceLastAttack = 0f;
         }
     }
+
 }
+
+    
